@@ -14,11 +14,9 @@ import org.matsim.core.router.PlanRouter;
 import org.matsim.core.scenario.ScenarioUtils;
 import org.matsim.core.utils.geometry.CoordUtils;
 import org.matsim.core.utils.geometry.transformations.IdentityTransformation;
-import org.matsim.population.algorithms.AbstractPersonAlgorithm;
-import org.matsim.population.algorithms.ParallelPersonAlgorithmRunner;
-import org.matsim.population.algorithms.PersonPrepareForSim;
-import org.matsim.pt.transitSchedule.api.TransitScheduleReader;
-import org.matsim.vehicles.VehicleReaderV1;
+import org.matsim.core.population.algorithms.AbstractPersonAlgorithm;
+import org.matsim.core.population.algorithms.ParallelPersonAlgorithmUtils;
+import org.matsim.core.population.algorithms.PersonPrepareForSim;
 
 import core.OTPTripRouterFactory;
 
@@ -107,8 +105,8 @@ public class GenerateAndRoutePopulation {
 				"/Users/michaelzilske/gtfs-ulm/Graph.obj", false, 1, false);
 
 		// make sure all routes are calculated.
-		ParallelPersonAlgorithmRunner.run(population, config.global().getNumberOfThreads(),
-				new ParallelPersonAlgorithmRunner.PersonAlgorithmProvider() {
+		ParallelPersonAlgorithmUtils.run(population, config.global().getNumberOfThreads(),
+				new ParallelPersonAlgorithmUtils.PersonAlgorithmProvider() {
 			@Override
 			public AbstractPersonAlgorithm getPersonAlgorithm() {
 				return new PersonPrepareForSim(new PlanRouter(trf.get(), scenario.getActivityFacilities()), scenario);
