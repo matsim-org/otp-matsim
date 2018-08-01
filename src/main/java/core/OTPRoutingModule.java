@@ -8,7 +8,7 @@ import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.api.core.v01.population.Route;
-import org.matsim.core.population.LegImpl;
+import org.matsim.core.population.PopulationUtils;
 import org.matsim.core.population.routes.GenericRouteImpl;
 import org.matsim.core.population.routes.RouteUtils;
 import org.matsim.core.router.RoutingModule;
@@ -158,7 +158,7 @@ public class OTPRoutingModule implements RoutingModule {
     private List<Leg> createTeleportationTrip(Id<Link> startLinkId, Id<Link> endLinkId, String teleport_mode) {
         List<Leg> egressTrip = new ArrayList<>();
         if (!startLinkId.equals(endLinkId)) {
-            Leg leg = new LegImpl(teleport_mode);
+            Leg leg = PopulationUtils.createLeg(teleport_mode);
             GenericRouteImpl route = new GenericRouteImpl(startLinkId, endLinkId);
 //            link Coords seem to be not accessible via pathservice
 //            set teleport travel time to 0
@@ -296,7 +296,7 @@ public class OTPRoutingModule implements RoutingModule {
                     		stop = newStop;
                     	} else {
                         	// alighting
-                            Leg leg = new LegImpl(PT);
+                            Leg leg = PopulationUtils.createLeg(PT);
                             String newStop = ((TransitVertex) state.getVertex()).getStopId().toString();
                             TransitStopFacility accessFacility = transitSchedule.getFacilities().get(Id.create(stop, TransitStopFacility.class));
                             TransitStopFacility egressFacility = transitSchedule.getFacilities().get(Id.create(newStop, TransitStopFacility.class));
@@ -565,7 +565,7 @@ public class OTPRoutingModule implements RoutingModule {
 	
 	private Leg createStreetNetworkNonTransitLeg(String mode, List<Id<Link>> linksTraversed, 
 			long travelTime, long departureTime, double distance){
-		Leg leg = new LegImpl(mode);
+		Leg leg = PopulationUtils.createLeg(mode);
 		Route route = RouteUtils.createNetworkRoute(linksTraversed, matsimNetwork);
 		route.setTravelTime(travelTime);
 		route.setDistance(distance);

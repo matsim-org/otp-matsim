@@ -5,12 +5,11 @@ import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.network.Link;
+import org.matsim.api.core.v01.network.Network;
 import org.matsim.api.core.v01.population.*;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
-import org.matsim.core.network.MatsimNetworkReader;
-import org.matsim.core.network.NetworkImpl;
-import org.matsim.core.population.ActivityImpl;
+import org.matsim.core.network.NetworkUtils;
 import org.matsim.core.router.PlanRouter;
 import org.matsim.core.router.util.TravelDisutility;
 import org.matsim.core.router.util.TravelTime;
@@ -42,7 +41,7 @@ public class GenerateAndRoutePopulation {
 
 	private static Population population;
 
-	private NetworkImpl network;
+	private Network network;
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		new GenerateAndRoutePopulation().convert();
@@ -64,11 +63,11 @@ public class GenerateAndRoutePopulation {
 		config.transit().setTransitScheduleFile("Z:/WinHome/otp-matsim/Portland/gtfs2matsim/transit-schedule.xml");
 		config.transit().setVehiclesFile("Z:/WinHome/otp-matsim/Portland/gtfs2matsim/transit-vehicles.xml");
 		config.network().setInputFile("Z:/WinHome/otp-matsim/Portland/gtfs2matsim/network.xml");
-		final Scenario scenario = ScenarioUtils.createScenario(config);
+		final Scenario scenario = ScenarioUtils.loadScenario(config);
 
-		new MatsimNetworkReader(scenario.getNetwork()).readFile("Z:/WinHome/otp-matsim/Portland/gtfs2matsim/network.xml");
-		new VehicleReaderV1(scenario.getVehicles()).readFile(config.transit().getVehiclesFile());
-		new TransitScheduleReader(scenario).readFile(config.transit().getTransitScheduleFile());
+//		new MatsimNetworkReader(scenario.getNetwork()).readFile("Z:/WinHome/otp-matsim/Portland/gtfs2matsim/network.xml");
+//		new VehicleReaderV1(scenario.getVehicles()).readFile(config.transit().getVehiclesFile());
+//		new TransitScheduleReader(scenario).readFile(config.transit().getTransitScheduleFile());
 
 		// new NetworkCleaner().run(scenario.getNetwork());
 		System.out.println("Scenario has " + scenario.getNetwork().getLinks().size() + " links.");
@@ -84,7 +83,7 @@ public class GenerateAndRoutePopulation {
 
 
 		population = scenario.getPopulation();
-		network = (NetworkImpl) scenario.getNetwork();
+		network = scenario.getNetwork();
 		for (int i=0; i<1000; ++i) {
 			Coord source = CoordUtils.createCoord(minX + Math.random() * (maxX - minX), minY + Math.random() * (maxY - minY));
 			Coord sink = CoordUtils.createCoord(minX + Math.random() * (maxX - minX), minY + Math.random() * (maxY - minY));
@@ -130,15 +129,15 @@ public class GenerateAndRoutePopulation {
 	private Activity createWork(Coord workLocation) {
 		Activity activity = population.getFactory().createActivityFromCoord("work", workLocation);
 		activity.setEndTime(17*60*60);
-		((ActivityImpl) activity).setLinkId(network.getNearestLinkExactly(workLocation).getId());
+		activity.setLinkId(NetworkUtils.getNearestLinkExactly(network, workLocation).getId());
 		return activity;
 	}
 
 	private Activity createHome(Coord homeLocation) {
 		Activity activity = population.getFactory().createActivityFromCoord("home", homeLocation);
 		activity.setEndTime(9*60*60);
-		Link link = network.getNearestLinkExactly(homeLocation);
-		((ActivityImpl) activity).setLinkId(link.getId());
+		Link link = NetworkUtils.getNearestLinkExactly(network, homeLocation);
+		activity.setLinkId(link.getId());
 		return activity;
 	}
 

@@ -13,13 +13,11 @@ import org.matsim.core.config.groups.StrategyConfigGroup.StrategySettings;
 import org.matsim.core.controler.AbstractModule;
 import org.matsim.core.controler.Controler;
 import org.matsim.core.controler.OutputDirectoryHierarchy;
-import org.matsim.core.network.MatsimNetworkReader;
 import org.matsim.core.scenario.ScenarioUtils;
 import org.matsim.core.utils.geometry.transformations.TransformationFactory;
+import org.matsim.facilities.Facility;
 import org.matsim.pt.router.TransitRouter;
-import org.matsim.pt.transitSchedule.api.TransitScheduleReader;
 import org.matsim.pt.transitSchedule.api.TransitStopFacility;
-import org.matsim.vehicles.VehicleReaderV1;
 
 import core.OTPTripRouterFactory;
 
@@ -109,11 +107,11 @@ public class GeneratePopulationAndRunScenario {
 		config.strategy().addStrategySettings(expBeta);
 		config.strategy().addStrategySettings(reRoute);
 
-        scenario = ScenarioUtils.createScenario(config);
+        scenario = ScenarioUtils.loadScenario(config);
 
-		new MatsimNetworkReader(scenario.getNetwork()).readFile(config.network().getInputFile());
-		new TransitScheduleReader(scenario).readFile(config.transit().getTransitScheduleFile());
-		new VehicleReaderV1(scenario.getTransitVehicles()).readFile(config.transit().getVehiclesFile());
+//		new MatsimNetworkReader(scenario.getNetwork()).readFile(config.network().getInputFile());
+//		new TransitScheduleReader(scenario).readFile(config.transit().getTransitScheduleFile());
+//		new VehicleReaderV1(scenario.getTransitVehicles()).readFile(config.transit().getVehiclesFile());
 		
         facs = new ArrayList<>(scenario.getTransitSchedule().getFacilities().values());
         System.out.println("Scenario has " + scenario.getNetwork().getLinks().size() + " links.");
@@ -148,7 +146,8 @@ public class GeneratePopulationAndRunScenario {
 	
 	static class DummyTransitRouter implements TransitRouter {
 		@Override
-		public List<Leg> calcRoute(Coord fromCoord, Coord toCoord, double departureTime, Person person) {
+		public List<Leg> calcRoute(Facility<?> fromFacility, Facility<?> toFacility, double departureTime,
+				Person person) {
 			throw new RuntimeException();
 		}
 		
@@ -184,9 +183,9 @@ public class GeneratePopulationAndRunScenario {
     private Coord randomCoord() {
         int nFac = (int) (facs.size() * Math.random());
         Coord coordsOfATransitStop = facs.get(nFac).getCoord();
-        coordsOfATransitStop.setXY(coordsOfATransitStop.getX() + Math.random() * 1000 - 500, coordsOfATransitStop.getY() + Math.random() * 1000 - 500);
+        Coord randomCoord = new Coord(coordsOfATransitStop.getX() + Math.random() * 1000 - 500, coordsOfATransitStop.getY() + Math.random() * 1000 - 500);
         // People live within 1 km of transit stops. :-)
-		return coordsOfATransitStop;
+		return randomCoord;
     }
 
 	private Activity createWork(Coord workLocation) {
