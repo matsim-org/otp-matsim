@@ -1,6 +1,6 @@
 package examples.vbb;
 
-import run.RunOTP;
+import core.RunOTP;
 import run.ExtractNetwork;
 import run.GeneratePopulationAndRunScenario;
 

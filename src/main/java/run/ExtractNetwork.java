@@ -1,13 +1,18 @@
 package run;
 
+import java.io.File;
+
 import org.matsim.api.core.v01.network.Network;
 import org.matsim.core.network.io.NetworkWriter;
 import org.matsim.core.utils.geometry.transformations.TransformationFactory;
 import org.matsim.pt.transitSchedule.api.TransitScheduleWriter;
 import org.matsim.vehicles.VehicleWriterV1;
+import org.opentripplanner.routing.graph.Graph;
+import org.opentripplanner.routing.impl.InputStreamGraphSource;
+import org.opentripplanner.routing.services.GraphService;
 
-import core.OTPTripRouterFactory;
 import core.ReadGraph;
+import core.RunOTP;
 
 public class ExtractNetwork {
 	
@@ -37,7 +42,7 @@ public class ExtractNetwork {
 	}
 	
 	public void run(){
-        ReadGraph readGraph = new ReadGraph(OTPTripRouterFactory.createGraphService(otpGraphDir),
+        ReadGraph readGraph = new ReadGraph(RunOTP.createGraphService(otpGraphDir),
                 TransformationFactory.getCoordinateTransformation(TransformationFactory.WGS84, 
                 		targetScenarioCoordinateSystem),
                 date,
@@ -52,4 +57,5 @@ public class ExtractNetwork {
         new TransitScheduleWriter(readGraph.getScenario().getTransitSchedule()).writeFile(transitScheduleFile);
         new VehicleWriterV1(readGraph.getScenario().getTransitVehicles()).writeFile(transitVehicleFile);
 	}
+
 }

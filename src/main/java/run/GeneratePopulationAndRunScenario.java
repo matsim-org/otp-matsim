@@ -19,8 +19,6 @@ import org.matsim.facilities.Facility;
 import org.matsim.pt.router.TransitRouter;
 import org.matsim.pt.transitSchedule.api.TransitStopFacility;
 
-import core.OTPTripRouterFactory;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -116,31 +114,31 @@ public class GeneratePopulationAndRunScenario {
         facs = new ArrayList<>(scenario.getTransitSchedule().getFacilities().values());
         System.out.println("Scenario has " + scenario.getNetwork().getLinks().size() + " links.");
 
-		final OTPTripRouterFactory trf = new OTPTripRouterFactory(scenario.getTransitSchedule(),
-				scenario.getNetwork(), TransformationFactory.getCoordinateTransformation( 
-						targetScenarioCoordinateSystem, TransformationFactory.WGS84),
-				date,
-				timeZone,
-                otpGraphDir,
-                true, 3, 
-                useCreatePseudoNetworkInsteadOfOtpPtNetwork);
-        
-        generatePopulation();
-        
-        new PopulationWriter(scenario.getPopulation(), scenario.getNetwork()).writeV5(populationFile);
-
-		Controler controler = new Controler(scenario);
-		controler.addOverridingModule(new AbstractModule() {
-
-			@Override
-			public void install() {
-				bind(TransitRouter.class).to(DummyTransitRouter.class);
-			}
-			
-		});
-		controler.setTripRouterFactory(trf);
-
-		controler.run();
+//		final OTPTripRouterFactory trf = new OTPTripRouterFactory(scenario.getTransitSchedule(),
+//				scenario.getNetwork(), TransformationFactory.getCoordinateTransformation( 
+//						targetScenarioCoordinateSystem, TransformationFactory.WGS84),
+//				date,
+//				timeZone,
+//                otpGraphDir,
+//                true, 3, 
+//                useCreatePseudoNetworkInsteadOfOtpPtNetwork);
+//        
+//        generatePopulation();
+//        
+//        new PopulationWriter(scenario.getPopulation(), scenario.getNetwork()).writeV5(populationFile);
+//
+//		Controler controler = new Controler(scenario);
+//		controler.addOverridingModule(new AbstractModule() {
+//
+//			@Override
+//			public void install() {
+//				bind(TransitRouter.class).to(DummyTransitRouter.class);
+//			}
+//			
+//		});
+//		controler.setTripRouterFactory(trf);
+//
+//		controler.run();
 
 	}
 	

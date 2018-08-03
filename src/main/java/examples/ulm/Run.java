@@ -1,8 +1,8 @@
 package examples.ulm;
 
+import core.RunOTP;
 import run.ExtractNetwork;
 import run.GeneratePopulationAndRunScenario;
-import run.RunOTP;
 
 public class Run {
 	/**
@@ -35,7 +35,7 @@ public class Run {
     public static void main(String[] args){
 //    	RunOTP.runGraphBuilder(OTP_GRAPH_DIR);
 //    	RunOTP.runGraphVisualizer(OTP_GRAPH_DIR);
-    	runExtractNetwork();
+//    	runExtractNetwork();
     	runGeneratePopulationAndScenario();
     }
 

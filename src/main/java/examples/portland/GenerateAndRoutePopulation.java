@@ -18,8 +18,6 @@ import org.matsim.core.population.algorithms.AbstractPersonAlgorithm;
 import org.matsim.core.population.algorithms.ParallelPersonAlgorithmUtils;
 import org.matsim.core.population.algorithms.PersonPrepareForSim;
 
-import core.OTPTripRouterFactory;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -100,20 +98,20 @@ public class GenerateAndRoutePopulation {
 			population.addPerson(person);
 		}
 
-		final OTPTripRouterFactory trf = new OTPTripRouterFactory(scenario.getTransitSchedule(), 
-				scenario.getNetwork(), new IdentityTransformation(), "2015-02-10", "America/Los_Angeles", 
-				"Z:/WinHome/otp-matsim/Portland/pdx/Graph.obj", false, 1, false);
-
-		// make sure all routes are calculated.
-		ParallelPersonAlgorithmUtils.run(population, config.global().getNumberOfThreads(),
-				new ParallelPersonAlgorithmUtils.PersonAlgorithmProvider() {
-			@Override
-			public AbstractPersonAlgorithm getPersonAlgorithm() {
-				return new PersonPrepareForSim(new PlanRouter(trf.get(), scenario.getActivityFacilities()), scenario);
-			}
-		});
-
-		new PopulationWriter(population, scenario.getNetwork()).writeV5("Z:/WinHome/otp-matsim/Portland/matsim/population.xml");
+//		final OTPTripRouterFactory trf = new OTPTripRouterFactory(scenario.getTransitSchedule(), 
+//				scenario.getNetwork(), new IdentityTransformation(), "2015-02-10", "America/Los_Angeles", 
+//				"Z:/WinHome/otp-matsim/Portland/pdx/Graph.obj", false, 1, false);
+//
+//		// make sure all routes are calculated.
+//		ParallelPersonAlgorithmUtils.run(population, config.global().getNumberOfThreads(),
+//				new ParallelPersonAlgorithmUtils.PersonAlgorithmProvider() {
+//			@Override
+//			public AbstractPersonAlgorithm getPersonAlgorithm() {
+//				return new PersonPrepareForSim(new PlanRouter(trf.get(), scenario.getActivityFacilities()), scenario);
+//			}
+//		});
+//
+//		new PopulationWriter(population, scenario.getNetwork()).writeV5("Z:/WinHome/otp-matsim/Portland/matsim/population.xml");
 
 	}
 

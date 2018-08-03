@@ -13,17 +13,15 @@ import org.matsim.core.config.groups.StrategyConfigGroup.StrategySettings;
 import org.matsim.core.controler.AbstractModule;
 import org.matsim.core.controler.Controler;
 import org.matsim.core.controler.OutputDirectoryHierarchy;
-import org.matsim.core.network.io.MatsimNetworkReader;
 import org.matsim.core.scenario.ScenarioUtils;
 import org.matsim.core.utils.geometry.CoordUtils;
 import org.matsim.core.utils.geometry.transformations.TransformationFactory;
 import org.matsim.facilities.Facility;
 import org.matsim.pt.router.TransitRouter;
-import org.matsim.pt.transitSchedule.api.TransitScheduleReader;
 import org.matsim.pt.transitSchedule.api.TransitStopFacility;
-import org.matsim.vehicles.VehicleReaderV1;
 
-import core.OTPTripRouterFactory;
+import config.OTPMatsimConfigGroup;
+import core.OTPMatsimModule;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,6 +63,14 @@ public class GeneratePopulationAndRunScenario {
 		config.controler().setWritePlansInterval(1);
 //		config.qsim().setEndTime(30*60*60);
 		
+		OTPMatsimConfigGroup otpMatsimConfigGroup = new OTPMatsimConfigGroup();
+		otpMatsimConfigGroup.setOtpCoordinateSystem(Run.TARGET_SCENARIO_COORDINATE_SYSTEM);
+		otpMatsimConfigGroup.setOtpDay(Run.DATE);
+		otpMatsimConfigGroup.setOtpTimeZone(Run.TIME_ZONE);
+		otpMatsimConfigGroup.setOtpGraphFile(Run.OTP_GRAPH_DIR);
+		
+		config.addModule(otpMatsimConfigGroup);
+		
 		ActivityParams home = new ActivityParams("home");
 		home.setTypicalDuration(12*60*60);
 		config.planCalcScore().addActivityParams(home);
@@ -85,38 +91,23 @@ public class GeneratePopulationAndRunScenario {
 		config.strategy().addStrategySettings(expBeta);
 		config.strategy().addStrategySettings(reRoute);
 
-        scenario = ScenarioUtils.createScenario(config);
-
-		new MatsimNetworkReader(scenario.getNetwork()).readFile(config.network().getInputFile());
-		new TransitScheduleReader(scenario).readFile(config.transit().getTransitScheduleFile());
-		new VehicleReaderV1(scenario.getTransitVehicles()).readFile(config.transit().getVehiclesFile());
+        scenario = ScenarioUtils.loadScenario(config);
 		
         facs = new ArrayList<>(scenario.getTransitSchedule().getFacilities().values());
         System.out.println("Scenario has " + scenario.getNetwork().getLinks().size() + " links.");
-
-		final OTPTripRouterFactory trf = new OTPTripRouterFactory(scenario.getTransitSchedule(),
-				scenario.getNetwork(), TransformationFactory.getCoordinateTransformation( 
-						Run.TARGET_SCENARIO_COORDINATE_SYSTEM, TransformationFactory.WGS84),
-                Run.DATE,
-                Run.TIME_ZONE,
-                Run.BASEDIR,
-                true, 3, 
-                Run.USE_CREATE_PSEUDO_NETWORK_INSTEAD_OF_OTP_PT_NETWORK);
         
         generatePopulation();
         
         new PopulationWriter(scenario.getPopulation(), scenario.getNetwork()).writeV5("output/population_vor_Simulation.xml");
 
 		Controler controler = new Controler(scenario);
+		
 		controler.addOverridingModule(new AbstractModule() {
-
 			@Override
 			public void install() {
-				bind(TransitRouter.class).to(DummyTransitRouter.class);
+				install(new OTPMatsimModule());
 			}
-			
 		});
-		controler.setTripRouterFactory(trf);
 
 		controler.run();
 

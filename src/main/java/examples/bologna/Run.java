@@ -1,8 +1,8 @@
 package examples.bologna;
 
+import core.RunOTP;
 import run.ExtractNetwork;
 import run.GeneratePopulationAndRunScenario;
-import run.RunOTP;
 
 public class Run {
 

@@ -1,8 +1,8 @@
 package examples.portland;
 
+import core.RunOTP;
 import run.ExtractNetwork;
 import run.GeneratePopulationAndRunScenario;
-import run.RunOTP;
 
 /**
  * fails (does not terminate) for USE_CREATE_PSEUDO_NETWORK_INSTEAD_OF_OTP_PT_NETWORK = true, e.g.:
