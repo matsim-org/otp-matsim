@@ -95,7 +95,7 @@ public class OTPMatsimRoutingModule implements RoutingModule {
 	 * @return the list of legs returned by the transit router.
 	 */
 	@Override
-	public List<? extends PlanElement> calcRoute(final Facility<?> fromFacility, final Facility<?> toFacility,
+	public List<? extends PlanElement> calcRoute(final Facility fromFacility, final Facility toFacility,
 			final double departureTime, final Person person) {
 		List<Leg> baseTrip = otpMatsim.calcRoute(fromFacility, toFacility, departureTime, person);
 

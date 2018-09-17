@@ -144,7 +144,7 @@ public class GeneratePopulationAndRunScenario {
 	
 	static class DummyTransitRouter implements TransitRouter {
 		@Override
-		public List<Leg> calcRoute(Facility<?> fromFacility, Facility<?> toFacility, double departureTime,
+		public List<Leg> calcRoute(Facility fromFacility, Facility toFacility, double departureTime,
 				Person person) {
 			throw new RuntimeException();
 		}
